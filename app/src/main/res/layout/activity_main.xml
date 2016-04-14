@@ -8,13 +8,54 @@
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="com.android.liuzhuang.barrage.MainActivity">
-
-    <Button
-        android:layout_width="wrap_content"
+    <GridLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/start"
-        android:text="Start" />
+        android:columnCount="3"
+        android:rowCount="2">
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/right_left"
+            android:onClick="onClick"
+            android:text="right_left" />
 
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/left_right"
+            android:onClick="onClick"
+            android:text="left_right" />
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/top_down"
+            android:onClick="onClick"
+            android:text="top_down" />
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="onClick"
+            android:id="@+id/down_top"
+            android:text="down_top" />
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="onClick"
+            android:id="@+id/create"
+            android:text="create" />
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="onClick"
+            android:id="@+id/stop"
+            android:text="stop" />
+    </GridLayout>
     <com.android.liuzhuang.library.ui.BarrageView
         android:layout_width="match_parent"
         android:layout_height="match_parent"

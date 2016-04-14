@@ -1,6 +1,9 @@
 package com.android.liuzhuang.library.model;
 
 import android.graphics.Bitmap;
+import android.graphics.Color;
+
+import com.android.liuzhuang.library.Constants;
 
 /**
  * The base data Object of barrage
@@ -15,10 +18,14 @@ public class BarrageDo {
     private ImageSize imageSize;
     private Arrange arrange;
     private int velocity;
-    /**The during millisecond when this item shows since starting.*/
+    private int acceleration;
+    private int direction = Constants.RIGHT_LEFT;
+    /**The during millisecond when this item shows since starting. If -1, it will show immediately.*/
     private long millisecondFromStart;
-    /**The offset from margin of this item.*/
+    /**The offset from margin of this item. If horizontal margin top, if vertical margin left*/
     private int offsetFromMargin;
+
+    private int shownTime;
 
     private BarrageDo(Builder builder) {
         text = builder.text;
@@ -30,6 +37,16 @@ public class BarrageDo {
         velocity = builder.velocity;
         millisecondFromStart = builder.millisecondFromStart;
         offsetFromMargin = builder.offsetFromMargin;
+        direction = builder.direction;
+        acceleration = builder.acceleration;
+    }
+
+    public int getShownTime() {
+        return shownTime;
+    }
+
+    public void showOnce() {
+        shownTime ++;
     }
 
     public String getText() {
@@ -68,16 +85,27 @@ public class BarrageDo {
         return offsetFromMargin;
     }
 
+    public int getDirection() {
+        return direction;
+    }
+
+    public int getAcceleration() {
+        return acceleration;
+    }
+
     public static class Builder {
         private String text;
-        private int textColor;
-        private int textSize;
+        private int textColor = Color.BLACK;
+        private int textSize = 50;
         private Bitmap image;
         private ImageSize imageSize;
         private Arrange arrange;
-        private int velocity;
-        private long millisecondFromStart;
-        private int offsetFromMargin;
+        private int velocity = 10;
+        private int acceleration;
+        /**when will the item show, if -1, it will show immediately.*/
+        private long millisecondFromStart = -1;
+        private int offsetFromMargin = 100;
+        private int direction = Constants.RIGHT_LEFT;
 
         public Builder setText(String text) {
             this.text = text;
@@ -114,8 +142,25 @@ public class BarrageDo {
             return this;
         }
 
-        public Builder setTime(long millisecondFromStart) {
+        public Builder setMillisecondFromStart(long millisecondFromStart) {
             this.millisecondFromStart = millisecondFromStart;
+            return this;
+        }
+
+        public Builder setAcceleration(int acceleration) {
+            this.acceleration = acceleration;
+            return this;
+        }
+
+        public Builder setDirection(int direction) {
+            if (direction == Constants.RIGHT_LEFT ||
+                    direction == Constants.LEFT_RIGHT ||
+                    direction == Constants.TOP_DOWN ||
+                    direction == Constants.DOWN_TOP) {
+                this.direction = direction;
+            } else {
+                throw new IllegalArgumentException("direction is illegal!");
+            }
             return this;
         }
 

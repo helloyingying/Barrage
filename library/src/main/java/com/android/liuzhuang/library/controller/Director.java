@@ -1,13 +1,17 @@
 package com.android.liuzhuang.library.controller;
 
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.PorterDuff;
 import android.graphics.Rect;
 
-import com.android.liuzhuang.library.Constants;
 import com.android.liuzhuang.library.model.Actor;
 import com.android.liuzhuang.library.model.BarrageDo;
 import com.android.liuzhuang.library.ui.BarrageView;
+import com.android.liuzhuang.library.util.LogUtil;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -15,14 +19,16 @@ import java.util.List;
  * Created by liuzhuang on 16/4/8.
  */
 public final class Director {
-    private List<Actor> rawDataSource;
+    private List<Actor> allActors;
+    private List<Actor> showingActors;
 
     private BarrageView barrageView;
     private long duringMilliseconds;
     private long startTime;
 
     public Director() {
-        rawDataSource = new ArrayList<Actor>();
+        allActors = Collections.synchronizedList(new ArrayList<Actor>());
+        showingActors = Collections.synchronizedList(new ArrayList<Actor>());
     }
 
     public void setBarrageView(BarrageView barrageView) {
@@ -43,33 +49,54 @@ public final class Director {
     public void addData(BarrageDo barrageDo) {
         if (barrageDo != null) {
             Actor actor = new Actor(barrageDo,
-                    new Rect(barrageView.getLeft(), barrageView.getTop(), barrageView.getRight(), barrageView.getBottom()),
-                    Constants.DOWN_TOP);
-            rawDataSource.add(actor);
+                    new Rect(barrageView.getLeft(), barrageView.getTop(), barrageView.getRight(), barrageView.getBottom()));
+            allActors.add(actor);
         }
     }
 
     public synchronized boolean drawOnce() {
+        filterActors();
+        return drawOnceInner();
+    }
+
+    /**
+     * select actors need to show now.
+     */
+    // TODO: 16/4/14 不要每次都遍历
+    private void filterActors() {
         duringMilliseconds = System.currentTimeMillis() - startTime;
-        // TODO: 16/4/12  性能有问题,多线程clear时有下面的crash
-        /**
-         java.lang.IndexOutOfBoundsException: Invalid index 18, size is 0
-         at java.util.ArrayList.throwIndexOutOfBoundsException(ArrayList.java:255)
-         at java.util.ArrayList.get(ArrayList.java:308)
-         at com.android.liuzhuang.library.controller.Director.drawOnce(Director.java:59)
-         at com.android.liuzhuang.library.Barrage$DrawRunnable.run(Barrage.java:91)
-         at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1113)
-         at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:588)
-         at java.lang.Thread.run(Thread.java:818)
-         * */
-        for (int i = 0; i < rawDataSource.size(); i++) {
-            if (rawDataSource.get(i).checkValid(duringMilliseconds)) {
-                barrageView.addActor(rawDataSource.get(i));
-            } else {
-                barrageView.removeActor(rawDataSource.get(i));
+        showingActors.clear();
+        for (int i = 0; i < allActors.size(); i++) {
+            if (allActors.get(i).checkValid(duringMilliseconds)) {
+                showingActors.add(allActors.get(i));
             }
         }
-        return barrageView.drawOnce();
+        LogUtil.d("showing_actor_size", showingActors.size());
+    }
+
+    private boolean drawOnceInner() {
+        if (showingActors.isEmpty()) { // if no actors, then wait for a while.
+            try {
+                Thread.sleep(100);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            return true;
+        }
+        Canvas canvas = barrageView.getHolder().lockCanvas();
+        if (canvas != null) {
+            canvas.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR);
+            if (!showingActors.isEmpty()) {
+                synchronized (barrageView.getHolder()) {
+                    for (int i = 0; i < showingActors.size(); i++) {
+                        showingActors.get(i).drawSelf(canvas);
+                    }
+                }
+            }
+            barrageView.getHolder().unlockCanvasAndPost(canvas);
+            return true;
+        }
+        return false;
     }
 
     public void onStop() {
@@ -83,7 +110,8 @@ public final class Director {
     }
 
     public void clearData() {
-        rawDataSource.clear();
-        barrageView.clearActors();
+        allActors.clear();
+        showingActors.clear();
+        barrageView.clearStage();
     }
 }
