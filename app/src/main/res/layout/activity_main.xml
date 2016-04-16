@@ -60,6 +60,13 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:onClick="onClick"
+            android:id="@+id/balloons"
+            android:text="balloons" />
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="onClick"
             android:id="@+id/stop"
             android:text="stop" />
     </GridLayout>

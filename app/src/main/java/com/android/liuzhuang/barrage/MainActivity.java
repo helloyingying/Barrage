@@ -30,7 +30,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             Color.parseColor("#009688"),
             Color.parseColor("#4CAF50")
     };
-    Bitmap bitmap;
+    Bitmap coinBitmap;
+    Bitmap balloonBitmap;
     Random random = new Random();
 
     @Override
@@ -38,7 +39,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         barrage = new Barrage(this, (BarrageView) findViewById(R.id.barrage));
-        bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.coin);
+        coinBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.coin);
+        balloonBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.balloon);
     }
 
     @Override
@@ -64,7 +66,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                             .setOffsetFromMargin(random.nextInt(500))
                             .setAcceleration(0)
                             .setVelocity(10)
-                            .setImage(bitmap)
+                            .setImage(coinBitmap)
                             .setImageConfig(new BarrageDo.ImageConfig(200, 200, random.nextInt(15), 30))
                             .setRotateImage(true)
                             .setDirection(random.nextInt(4))
@@ -80,11 +82,28 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         .setMillisecondFromStart(random.nextInt(5000))
                         .setOffsetFromMargin(random.nextInt(1000))
                         .setVelocity(random.nextInt(5))
-                        .setImage(bitmap)
+                        .setImage(coinBitmap)
                         .setImageConfig(new BarrageDo.ImageConfig(size, size, 0, 0))
                         .setRotateImage(false)
                         .setAcceleration(random.nextInt(5) + 1)
                         .setDirection(Constants.TOP_DOWN)
+                        .build());
+            }
+            barrage.addDataList(data);
+            barrage.start();
+        } else if (v.getId() == R.id.balloons) {
+            List<BarrageDo> data = new ArrayList<>();
+            for (int i = 0; i < 50; i++) {
+                int size = 200 + random.nextInt(100);
+                data.add(new BarrageDo.Builder()
+                        .setMillisecondFromStart(random.nextInt(5000))
+                        .setOffsetFromMargin(random.nextInt(1000))
+                        .setVelocity(random.nextInt(30) + 20)
+                        .setImage(balloonBitmap)
+                        .setImageConfig(new BarrageDo.ImageConfig(size, size, 0, 0))
+                        .setRotateImage(false)
+                        .setAcceleration(0)
+                        .setDirection(Constants.DOWN_TOP)
                         .build());
             }
             barrage.addDataList(data);
