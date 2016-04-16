@@ -26,9 +26,10 @@ dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
 }
 
-def siteUrl = 'https://github.com/helloyingying/EZScalpel'      // 项目的主页
-def gitUrl = 'https://github.com/helloyingying/EZScalpel.git'   // Git仓库的url
+def siteUrl = 'https://github.com/helloyingying/Barrage'      // 项目的主页
+def gitUrl = 'git@github.com:helloyingying/Barrage.git'   // Git仓库的url
 group = "com.liuzhuang.opensource"
+
 install {
     repositories.mavenInstaller {
         // This generates POM.xml with proper parameters
@@ -36,9 +37,12 @@ install {
             project {
                 packaging 'aar'
                 // Add your description here
-                name 'This is a library to use https://github.com/JakeWharton/scalpel easily and without coupling with existing code.'
+                name 'This is a library to build a barrage effect.'
                 //项目描述
-                url 'http://techsummary.github.io/'
+                url 'https://github.com/helloyingying/Barrage'
+
+                artifactId 'barrage'
+
                 // Set your license
                 licenses {
                     license {
@@ -86,7 +90,7 @@ bintray {
     configurations = ['archives']
     pkg {
         repo = "maven"
-        name = "ezscalpel"
+        name = "barrage"
         websiteUrl = siteUrl
         vcsUrl = gitUrl
         licenses = ["Apache-2.0"]
