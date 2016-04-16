@@ -4,6 +4,8 @@ import android.graphics.Bitmap;
 import android.graphics.Color;
 
 import com.android.liuzhuang.library.Constants;
+import com.android.liuzhuang.library.util.ContextUtil;
+import com.android.liuzhuang.library.util.DeviceUtil;
 
 /**
  * The base data Object of barrage
@@ -11,34 +13,43 @@ import com.android.liuzhuang.library.Constants;
  */
 public class BarrageDo {
 
-    private String text;
-    private int textColor;
-    private int textSize;
+    private String text = "";
+    private int textColor = Color.BLACK;
+    private int textSize = DeviceUtil.dp2px(24, ContextUtil.getApplicationContext());
     private Bitmap image;
-    private ImageSize imageSize;
-    private Arrange arrange;
+    private ImageConfig imageConfig;
     private int velocity;
     private int acceleration;
     private int direction = Constants.RIGHT_LEFT;
+
     /**The during millisecond when this item shows since starting. If -1, it will show immediately.*/
     private long millisecondFromStart;
+
     /**The offset from margin of this item. If horizontal margin top, if vertical margin left*/
     private int offsetFromMargin;
 
+    /**how many times has be shown*/
     private int shownTime;
+
+    /**rotate the image or not when direction is TOP_DOWN or DOWN_TOP*/
+    private boolean rotateImage = true;
 
     private BarrageDo(Builder builder) {
         text = builder.text;
         textColor = builder.textColor;
         textSize = builder.textSize;
         image = builder.image;
-        imageSize = builder.imageSize;
-        arrange = builder.arrange;
+        imageConfig = builder.imageConfig;
         velocity = builder.velocity;
         millisecondFromStart = builder.millisecondFromStart;
         offsetFromMargin = builder.offsetFromMargin;
         direction = builder.direction;
         acceleration = builder.acceleration;
+        rotateImage = builder.rotateImage;
+    }
+
+    public boolean isRotateImage() {
+        return rotateImage;
     }
 
     public int getShownTime() {
@@ -65,12 +76,8 @@ public class BarrageDo {
         return image;
     }
 
-    public ImageSize getImageSize() {
-        return imageSize;
-    }
-
-    public Arrange getArrange() {
-        return arrange;
+    public ImageConfig getImageConfig() {
+        return imageConfig;
     }
 
     public int getVelocity() {
@@ -94,18 +101,20 @@ public class BarrageDo {
     }
 
     public static class Builder {
-        private String text;
+        private String text = "";
         private int textColor = Color.BLACK;
-        private int textSize = 50;
+        private int textSize = DeviceUtil.dp2px(32, ContextUtil.getApplicationContext());
         private Bitmap image;
-        private ImageSize imageSize;
-        private Arrange arrange;
-        private int velocity = 10;
-        private int acceleration;
+        private ImageConfig imageConfig = new ImageConfig(DeviceUtil.dp2px(64, ContextUtil.getApplicationContext()),
+                DeviceUtil.dp2px(64, ContextUtil.getApplicationContext()), 0, DeviceUtil.dp2px(2, ContextUtil.getApplicationContext()));
+        private int velocity = DeviceUtil.dp2px(3, ContextUtil.getApplicationContext());
+        private int acceleration = 0;
         /**when will the item show, if -1, it will show immediately.*/
         private long millisecondFromStart = -1;
-        private int offsetFromMargin = 100;
+        private int offsetFromMargin = DeviceUtil.dp2px(50, ContextUtil.getApplicationContext());
         private int direction = Constants.RIGHT_LEFT;
+        /**rotate the image or not when direction is TOP_DOWN or DOWN_TOP*/
+        private boolean rotateImage = true;
 
         public Builder setText(String text) {
             this.text = text;
@@ -127,13 +136,8 @@ public class BarrageDo {
             return this;
         }
 
-        public Builder setImageSize(ImageSize imageSize) {
-            this.imageSize = imageSize;
-            return this;
-        }
-
-        public Builder setArrange(Arrange arrange) {
-            this.arrange = arrange;
+        public Builder setImageConfig(ImageConfig imageConfig) {
+            this.imageConfig = imageConfig;
             return this;
         }
 
@@ -149,6 +153,11 @@ public class BarrageDo {
 
         public Builder setAcceleration(int acceleration) {
             this.acceleration = acceleration;
+            return this;
+        }
+
+        public Builder setRotateImage(boolean rotateImage) {
+            this.rotateImage = rotateImage;
             return this;
         }
 
@@ -174,12 +183,21 @@ public class BarrageDo {
         }
     }
 
-    public static class ImageSize {
+    public static class ImageConfig {
+        /**The width of ImageView*/
         public int width;
+        /**The width of ImageView*/
         public int height;
-    }
+        /**The position of ImageView relative to text, if 0, the first position, if text.length the last position*/
+        public int position;
 
-    public enum Arrange {
-        IMAGE_TEXT, TEXT_IMAGE
+        public int margin2text;
+
+        public ImageConfig(int width, int height, int position, int margin2text) {
+            this.width = width;
+            this.height = height;
+            this.position = position;
+            this.margin2text = margin2text;
+        }
     }
 }

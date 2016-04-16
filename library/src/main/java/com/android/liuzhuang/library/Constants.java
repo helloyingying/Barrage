@@ -6,6 +6,6 @@ package com.android.liuzhuang.library;
 public final class Constants {
     public static final int LEFT_RIGHT = 0;
     public static final int RIGHT_LEFT = 1;
-    public static final int TOP_DOWN = 3;
-    public static final int DOWN_TOP = 4;
+    public static final int TOP_DOWN = 2;
+    public static final int DOWN_TOP = 3;
 }

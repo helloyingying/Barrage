@@ -6,7 +6,7 @@ import android.util.Log;
 public class LogUtil {
 
     public static boolean isShow(){
-        return true;
+        return false;
     }
 
     public static boolean isShow(Object msg){

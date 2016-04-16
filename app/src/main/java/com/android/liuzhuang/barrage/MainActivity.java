@@ -1,5 +1,7 @@
 package com.android.liuzhuang.barrage;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -28,12 +30,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             Color.parseColor("#009688"),
             Color.parseColor("#4CAF50")
     };
+    Bitmap bitmap;
+    Random random = new Random();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         barrage = new Barrage(this, (BarrageView) findViewById(R.id.barrage));
+        bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.coin);
     }
 
     @Override
@@ -56,21 +61,40 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                             .setText("I am a new text")
                             .setTextColor(Color.BLACK)
                             .setTextSize(70)
-                            .setOffsetFromMargin(100)
+                            .setOffsetFromMargin(random.nextInt(500))
                             .setAcceleration(0)
                             .setVelocity(10)
-                            .setDirection(Constants.RIGHT_LEFT)
+                            .setImage(bitmap)
+                            .setImageConfig(new BarrageDo.ImageConfig(200, 200, random.nextInt(15), 30))
+                            .setRotateImage(true)
+                            .setDirection(random.nextInt(4))
                             .setMillisecondFromStart(-1)
                             .build());
                 }
             }).start();
+        } else if (v.getId() == R.id.coins) {
+            List<BarrageDo> data = new ArrayList<>();
+            for (int i = 0; i < 50; i++) {
+                int size = 200 + random.nextInt(100);
+                data.add(new BarrageDo.Builder()
+                        .setMillisecondFromStart(random.nextInt(5000))
+                        .setOffsetFromMargin(random.nextInt(1000))
+                        .setVelocity(random.nextInt(5))
+                        .setImage(bitmap)
+                        .setImageConfig(new BarrageDo.ImageConfig(size, size, 0, 0))
+                        .setRotateImage(false)
+                        .setAcceleration(random.nextInt(5) + 1)
+                        .setDirection(Constants.TOP_DOWN)
+                        .build());
+            }
+            barrage.addDataList(data);
+            barrage.start();
         }
 
     }
 
     private void createByDirection(int direction) {
         barrage.stop();
-        Random random = new Random();
         List<BarrageDo> data = new ArrayList<>();
         for (int i = 0; i < 50; i++) {
             data.add(new BarrageDo.Builder()
@@ -79,8 +103,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     .setMillisecondFromStart(1000*random.nextInt(5))
                     .setTextSize(50 + random.nextInt(10))
                     .setOffsetFromMargin(100 + random.nextInt(1000))
-                    .setVelocity(random.nextInt(5))
-                    .setAcceleration(random.nextInt(5) + 1)
+                    .setVelocity(random.nextInt(20) + 10)
+                    .setAcceleration(0)
                     .setDirection(direction)
                     .build());
         }

@@ -3,7 +3,6 @@ package com.android.liuzhuang.library.controller;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
-import android.graphics.Rect;
 
 import com.android.liuzhuang.library.model.Actor;
 import com.android.liuzhuang.library.model.BarrageDo;
@@ -48,8 +47,7 @@ public final class Director {
 
     public void addData(BarrageDo barrageDo) {
         if (barrageDo != null) {
-            Actor actor = new Actor(barrageDo,
-                    new Rect(barrageView.getLeft(), barrageView.getTop(), barrageView.getRight(), barrageView.getBottom()));
+            Actor actor = new Actor(barrageDo, barrageView.getWidth(), barrageView.getHeight());
             allActors.add(actor);
         }
     }

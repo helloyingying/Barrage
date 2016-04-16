@@ -5,6 +5,7 @@ import android.content.Context;
 import com.android.liuzhuang.library.controller.Director;
 import com.android.liuzhuang.library.model.BarrageDo;
 import com.android.liuzhuang.library.ui.BarrageView;
+import com.android.liuzhuang.library.util.ContextUtil;
 
 import java.lang.ref.WeakReference;
 import java.util.List;
@@ -33,6 +34,7 @@ public final class Barrage {
         }
         contextWeakReference = new WeakReference<Context>(context);
         init(barrageView);
+        ContextUtil.init(context);
     }
 
     private void init(BarrageView barrageView) {
